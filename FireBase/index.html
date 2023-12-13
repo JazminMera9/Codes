@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FireBase Crud</title>
+    <style>
+        label {
+            display: inline-block;
+            width: 80px;
+        }
+
+        input,
+        select {
+            width: 120px
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Crud Firebase</h1>
+    <label>Nombre</label><input id="NameBox" type="text" placeholder="Nombre"><br><br>
+    <label>Facultad</label><input id="FacultadBox" type="text" placeholder="Facultad"><br><br>
+    <label>Roll</label><input id="RollBox" type="text" placeholder="Roll"><br><br>
+    <label>Seccion</label><input id="SecBox" type="text" placeholder="Seccion"><br><br>
+    <label>Genero</label>
+    <select id="GenBox" title="Genero">
+        <option value="Male">Masculino</option>
+        <option value="Female">Femenino</option>
+    </select><br><br>
+    <hr>
+    <button id="Insbtn">Create</button>
+    <button id="Selsbtn">select</button>
+    <button id="Updbtn">Update</button>
+    <button id="Delbtn">Delete</button>
+
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBVdeh_0eFsovI2gyjvBS0feFkNmrDGNc8",
+            authDomain: "idkk-f8b61.firebaseapp.com",
+            databaseURL: "https://idkk-f8b61-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "idkk-f8b61",
+            storageBucket: "idkk-f8b61.appspot.com",
+            messagingSenderId: "73894802427",
+            appId: "1:73894802427:web:28d6cfebd25240e688915e"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        import { getDatabase, ref, get, set, child, update, remove } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-database.js";
+
+        const db = getDatabase();
+
+        var namebox = document.getElementById("NameBox");
+        var facultadbox = document.getElementById("FacultadBox");
+        var rollbox = document.getElementById("RollBox");
+        var secbox = document.getElementById("SecBox");
+        var genbox = document.getElementById("GenBox");
+
+        var insbtn = document.getElementById("Insbtn");
+        var selbtn = document.getElementById("Selsbtn");
+        var updbtn = document.getElementById("Updbtn");
+        var delbtn = document.getElementById("Delbtn");
+
+
+        function InserDate() {
+            set(ref(db, "Students/" + rollbox.value), {
+                NameOFStd: namebox.value,
+                FacultadStd : facultadbox.value,
+                RolNo: rollbox.value,
+                Section: secbox.value,
+                Gender: genbox.value
+            })
+                .then(() => {
+                    alert("boton Insertados correctamente");
+                })
+                .catch((error) => {
+                    alert("Falla al ingresar los datos" + error);
+                });
+        }
+
+        function selectData(){
+            const dbref = ref(db);
+
+            get(child(dbref,"Students/" + rollbox.value)).then((snapshot)=>{
+            if (snapshot.exists())
+            {
+                namebox.value = snapshot.val().NameOFStd;
+                secbox.value = snapshot.val().Section;
+                genbox.value = snapshot.val().Gender;
+            }
+            else{
+                alert("Datos no encontrados")
+            }
+         })
+         .catch((error)=>{
+            alert("Error"+error)
+         });
+        }
+
+        function UpdateDate(){
+            update(ref(db,"Students/" + rollbox.value),{
+                NameOFStd: namebox.value,
+                Section: secbox.value,
+                Gender: genbox.value
+            })
+            .then(()=>{
+                alert("Datos Actualizados Exitosamente");
+                namebox
+            })
+            .catch((error)=>{
+                alert("Error "+error);
+            })
+        }
+
+        function DeleteDate(){
+            remove(ref(db,"Students/" + rollbox.value))
+            .then(()=>{
+                alert("Datos Eliminados Exitosamente");
+                rollbox.value = '';
+            })
+            .catch((error)=>{
+                alert("Error "+error);
+            })
+        }
+
+        insbtn.addEventListener('click', InserDate);
+        selbtn.addEventListener('click',selectData);
+        updbtn.addEventListener('click',UpdateDate);
+        delbtn.addEventListener('click',DeleteDate);
+
+
+
+    </script>
+</body>
+
+</html>
